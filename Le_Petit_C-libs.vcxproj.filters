@@ -1,0 +1,181 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="LPC">
+      <UniqueIdentifier>{e7100964-f5ea-4298-b5f9-373187129abe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LPC\头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{d64323ca-78ff-41b6-8e74-41a4b210cacc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{98ea0826-37b3-48f7-903f-50e6d569f678}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LPC\LPCwinmain">
+      <UniqueIdentifier>{f3e91d90-1443-43be-a790-093564ca4b8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Lanton%27s ant">
+      <UniqueIdentifier>{0c558192-a1eb-448a-948a-9eed029945b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\AItest">
+      <UniqueIdentifier>{e179bb29-3282-44d9-af6c-ce5eae7b5790}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Snake">
+      <UniqueIdentifier>{9cbc2c6b-3604-4d3d-a48f-116e7fad45c9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="includes\msgchannels.h">
+      <Filter>LPC\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\OpenGL++.h">
+      <Filter>LPC\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\LPCwnd.h">
+      <Filter>LPC\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\LPCextra.h">
+      <Filter>LPC\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test1.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Suspend_and_Message_test.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test3.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test4.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\LPCwinmainA.h">
+      <Filter>LPC\LPCwinmain</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\LPCwinmainW.h">
+      <Filter>LPC\LPCwinmain</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\LPCwinmain.h">
+      <Filter>LPC\LPCwinmain</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\LPCwndex.hpp">
+      <Filter>LPC\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\LPCdebug.h">
+      <Filter>LPC\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\LPCmessages.h">
+      <Filter>LPC\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\LPCgraphics.hpp">
+      <Filter>LPC\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="mutexspeedtest.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\LPCthread.h">
+      <Filter>LPC\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Gammatest.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\LPCalgorithm.h">
+      <Filter>LPC\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="LPCthreadtest.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="LPCheaptest.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\LPCcomplex.h">
+      <Filter>LPC\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="LPCcomplextest.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="LPCgraphicstest.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\LPCgamewnd.hpp">
+      <Filter>LPC\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="LPCgamewndtest.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\LPCgamewnd.h">
+      <Filter>LPC\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\LPCgraphics.h">
+      <Filter>LPC\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\LPCwnd.hpp">
+      <Filter>LPC\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\LPCwndex.h">
+      <Filter>LPC\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects.h">
+      <Filter>源文件\AItest</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="demo.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="includes\LPCwinmainW.cpp">
+      <Filter>LPC\LPCwinmain</Filter>
+    </ClCompile>
+    <ClCompile Include="includes\LPCgraphics.cpp">
+      <Filter>LPC\头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="includes\LPCdebug.cpp">
+      <Filter>LPC\头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="includes\LPCthread.cpp">
+      <Filter>LPC\头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="includes\LPCwndex.cpp">
+      <Filter>LPC\头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="includes\LPCmessages.cpp">
+      <Filter>LPC\头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="includes\LPCwnd.cpp">
+      <Filter>LPC\头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="includes\LPCalgorithm.cpp">
+      <Filter>LPC\头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Lanton%27s ant.cpp">
+      <Filter>源文件\Lanton%27s ant</Filter>
+    </ClCompile>
+    <ClCompile Include="includes\LPCgamewnd.cpp">
+      <Filter>LPC\头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="includes\LPCwinmainA.cpp">
+      <Filter>LPC\LPCwinmain</Filter>
+    </ClCompile>
+    <ClCompile Include="AItest.cpp">
+      <Filter>源文件\AItest</Filter>
+    </ClCompile>
+    <ClCompile Include="Snake.cpp">
+      <Filter>源文件\Snake</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="includes\LPCgamewnd.inc">
+      <Filter>LPC\头文件</Filter>
+    </None>
+  </ItemGroup>
+</Project>
