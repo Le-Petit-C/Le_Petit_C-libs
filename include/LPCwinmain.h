@@ -1,7 +1,9 @@
 
 #pragma once
 
+#ifdef __cplusplus
 #include "LPCdebug.h"
+#endif
 
 #ifndef _LIB
 	#include <windows.h>

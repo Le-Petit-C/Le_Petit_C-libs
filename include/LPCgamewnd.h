@@ -7,15 +7,19 @@
 #include "LPCwinmain.h"
 #include "LPCdebug.h"
 
+#ifndef _LIB
+
 //需要用户自定义的函数:
 
 //接收比较常见的事件
 //返回值非0表示已经处理完毕消息，函数库不再对本次消息进行后续消息分发。
 //注:对于WND_MESSAGE消息，不保证一定在init被调用后才接收到，其他消息一定在init被调用后才接收到
-int event(unsigned int type, intptr_t p1, intptr_t p2);
+extern int event(unsigned int type, intptr_t p1, intptr_t p2);
 
 //入口函数，或者是程序开始时会调用一次的函数
-void init();
+extern void init();
+
+#endif
 
 namespace LPC {
 	//获取消息循环中的结构体指针，无需释放
@@ -84,13 +88,21 @@ namespace LPC {
 
 namespace LPC {
 	namespace priv {
+
+#ifdef _LIB
 		const MSG* pmsg;
+#else
+		extern const MSG* pmsg;
+#endif
 	}
 }
+
 
 inline const MSG* LPC::GetMSG() {
 	return priv::pmsg;
 }
+
+#ifndef _LIB
 
 namespace LPC {
 	namespace priv {
@@ -129,5 +141,6 @@ int _cdecl main(int argc, char** argv) {
 	}
 }
 
+#endif
 
 #endif

@@ -1,6 +1,7 @@
 
 #define LPCgamewndtitle L"Le_Petit_CµÄÀ¼¶ÙÂìÒÏ"
 
+#include <LPCgraphics_autoinit.h>
 #include <LPCgamewnd.h>
 #include <LPCcomplex.h>
 

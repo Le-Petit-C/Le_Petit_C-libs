@@ -1,4 +1,5 @@
 
+#include <LPCgraphics_autoinit.h>
 #include <LPCwndex.h>
 #include <LPCwinmain.h>
 

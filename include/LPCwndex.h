@@ -5,6 +5,22 @@
 #include "LPCwnd.h"
 #include "LPCgraphics.h"
 
+#ifndef _LIB
+	#ifndef _WIN64
+		#ifdef _DEBUG
+			#pragma comment(lib, "..\\Debug\\Le_Petit_C-wndex.lib")
+		#else
+			#pragma comment(lib, "..\\Release\\Le_Petit_C-wndex.lib")
+		#endif
+	#else
+		#ifdef _DEBUG
+			#pragma comment(lib, "..\\x64\\Debug\\Le_Petit_C-wndex.lib")
+		#else
+			#pragma comment(lib, "..\\x64\\Release\\Le_Petit_C-wndex.lib")
+		#endif
+	#endif
+#endif
+
 namespace LPC {
 	extern wndbuffer* defaultbuffer;
 	struct { inline operator int() { return GetSystemMetrics(SM_CXSCREEN); } } DSKW;
