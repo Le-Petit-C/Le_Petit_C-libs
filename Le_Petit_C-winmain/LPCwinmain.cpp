@@ -1,7 +1,6 @@
 ﻿
 #include "pch.h"
 
-extern int __cdecl main(int argc, char** argv);
 
 int WINAPI WinMain(
     _In_ HINSTANCE hInstance,
