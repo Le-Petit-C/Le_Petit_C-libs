@@ -2,7 +2,7 @@
 #ifndef LPCdebug_h
 #define LPCdebug_h
 
-#pragma execution_character_set("en_US.UTF-8")
+//#pragma execution_character_set("en_US.UTF-8")
 //我也不知道为什么这里会报一个warning，但事实就是把这里按他说的改了之后就会输出乱码
 
 //debug模式下输出到控制台

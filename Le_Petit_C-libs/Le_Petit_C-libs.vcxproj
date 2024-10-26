@@ -217,6 +217,7 @@
     <ClInclude Include="..\include\LPCgraphics.h" />
     <ClInclude Include="..\include\LPCgraphics_autoinit.h" />
     <ClInclude Include="..\include\LPCmessages.h" />
+    <ClInclude Include="..\include\LPCstr.h" />
     <ClInclude Include="..\include\LPCthread.h" />
     <ClInclude Include="..\include\LPCwnd.h" />
     <ClInclude Include="Objects.h" />
@@ -235,6 +236,7 @@
     <ClCompile Include="LPCgamewnd.cpp" />
     <ClCompile Include="LPCgraphics.cpp" />
     <ClCompile Include="LPCmessages.cpp" />
+    <ClCompile Include="LPCstr.cpp" />
     <ClCompile Include="LPCthread.cpp" />
     <ClCompile Include="LPCwnd.cpp" />
     <ClCompile Include="pch.cpp">

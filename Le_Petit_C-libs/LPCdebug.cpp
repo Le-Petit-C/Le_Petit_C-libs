@@ -8,7 +8,7 @@ namespace LPC {
 		bool shouldExceptionOutput = true;
 		struct debug_InitClass {
 			debug_InitClass() {
-				setlocale(LC_ALL, "en_US.UTF-8");
+				//setlocale(LC_ALL, "en_US.UTF-8");
 			}
 		} debugInitInstance;
 	}

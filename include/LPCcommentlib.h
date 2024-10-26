@@ -1,6 +1,11 @@
 
 #pragma once
 
+namespace LPC {
+	constexpr const char* const defaultWindowTitle = "Supported by Le_Petit_C";
+	constexpr const wchar_t* const defaultWindowTitleW = L"Supported by Le_Petit_C";
+}
+
 #ifndef _LIB
 	#include <windows.h>
 	#ifndef _WIN64

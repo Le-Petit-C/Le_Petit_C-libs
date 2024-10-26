@@ -4,9 +4,10 @@
 
 #include <unordered_map>
 
+#include <iostream>
 #include <windows.h>
 #include <stdint.h>
-#include <string.h>
+#include <string>
 #include <malloc.h>
 #include <tuple>
 #include <thread>
@@ -25,79 +26,142 @@
 namespace LPC {
 	void msgBox(const char* text, const char* caption, UINT type = 0);
 	void msgBox(const wchar_t* text, const wchar_t* caption, UINT type = 0);
-	extern HINSTANCE statichInstance;
+	
+	//窗口对象。
+	//创建时优先使用构造函数的参数，不足部分再取用默认设置中的参数。
+	class window;
+
+	//窗口创建时的设置（当然是创建窗口时用啦，你也可以选择把设置保留下来以后用）
+	struct WindowCreateSetting;
+
+	//窗口默认设置对象，存储设置的同时作为栈的一层。
+	//构造时自动压栈，并将上一默认复制到自身。析构时自动出栈。
+	//可以直接修改成员，也就是修改了默认项。
+	class PushDefaultWindowSetting;
+
+	//获取当前窗口创建的默认设置
+	WindowCreateSetting* getWindowDefaultSetting();
+
+	//窗口类对象。每一个窗口创建时都归属一个窗口类。
+	//不要在销毁属于这个窗口类对象的所有窗口前析构这个窗口类对象
+	//不要用已销毁的窗口类对象创建窗口
 	class windowclass;
+
+	//窗口类创建时的设置（当然是创建窗口时用啦，你也可以选择把设置保留下来以后用）
+	struct WindowClassCreateSetting;
+	
+	//窗口默认设置对象，存储设置的同时作为栈的一层。
+	//构造时自动压栈，并将上一默认复制到自身。析构时自动出栈。
+	//可以直接修改成员，也就是修改了默认项。
+	class PushDefaultClassSetting;
+
+	//获取当前窗口类创建的默认设置
+	WindowClassCreateSetting* getWindowClassDefaultSetting();
 }
+
+struct LPC::WindowCreateSetting {
+	DWORD dwExStyle;
+	const windowclass* pwndclass;
+	std::string titleA;
+	std::wstring titleW;
+	DWORD dwStyle;
+	int X, Y, nWidth, nHeight;
+	HWND Parent;
+	HMENU menu;
+	HINSTANCE hInstance;
+	void* lpParam;
+	WindowCreateSetting();
+	WindowCreateSetting(const WindowCreateSetting&) = default;
+	HWND create() const;
+	void setTitle(std::string);
+	void setTitle(std::wstring);
+};
+
+class LPC::PushDefaultWindowSetting {
+public:
+	WindowCreateSetting setting;
+	PushDefaultWindowSetting();
+	inline WindowCreateSetting* operator->() { return &setting; }
+private:
+	WindowCreateSetting* lastDefault;
+};
+
+struct LPC::WindowClassCreateSetting {
+	UINT        style;
+	WNDPROC     lpfnWndProc;
+	int         cbClsExtra;
+	int         cbWndExtra;
+	HINSTANCE   hInstance;
+	HICON       hIcon;
+	HCURSOR     hCursor;
+	HBRUSH      hbrBackground;
+	std::string menuNameA;
+	std::wstring menuNameW;
+	//你可以直接给这些参数赋值，当然也可以调用下面的函数
+	//给窗口加上或去除CS_OWNDC属性
+	void ownDC(bool b);
+	//将本窗口的相关参数设置为默认状态，方便之后创建窗口
+	void setDefault();
+	//修改菜单名
+	void setMenuName(std::string);
+	void setMenuName(std::wstring);
+	//构造函数
+	WindowClassCreateSetting();
+	WindowClassCreateSetting(const WindowClassCreateSetting&) = default;
+};
+
+class LPC::PushDefaultClassSetting {
+public:
+	WindowClassCreateSetting setting;
+	PushDefaultClassSetting();
+	inline WindowClassCreateSetting* operator->() { return &setting; }
+private:
+	WindowClassCreateSetting* lastDefault;
+};
 
 class LPC::windowclass {
 	static std::atomic_uintptr_t classid;
-	intptr_t thisid;
-	static const constexpr size_t bufsizeInWords = 256;
-	wchar_t menuName[bufsizeInWords];
-	wchar_t className[bufsizeInWords];
-	WNDCLASSW wc;
+	intptr_t thisid = 0;
+	HINSTANCE hInstance;
+	std::string classNameA;
+	std::wstring classNameW;
 	ATOM classAtom;
-	dexcoc createdErrorDetect() const;
+	//dexcoc createdErrorDetect() const;
+	void reg();
+	void unreg();
 public:
-	dexcoc reg();
-	dexcoc unreg();
-	template<typename char_t>
-	dexcoc setMenuName(char_t* szMenuName) {
-		if (createdErrorDetect()) return true;
-		if (szMenuName == nullptr)
-			wc.lpszMenuName = nullptr;
-		else {
-			copystring_s(menuName, bufsizeInWords, szMenuName);
-			wc.lpszMenuName = menuName;
-		}
-		return false;
-	}
-	template<typename char_t>
-	dexcoc setClassName(char_t* szClassName) {
-		if (createdErrorDetect()) return true;
-		copystring_s(className, bufsizeInWords, szClassName);
-		return false;
-	}
-	dexcoc ownDC(bool b);
+	windowclass(std::wstring classNameW);
+	windowclass(std::string classNameA);
 	//只是返回存储变量名的字符串地址，不是新开辟一块内存空间，无需手动释放内存
-	const wchar_t* getClassName() const;
-	dexcoc setDefault();
+	const char* getClassNameA() const;
+	const wchar_t* getClassNameW() const;
+	operator const char* ();
 	operator const wchar_t* ();
-	const WNDCLASSW& getwc() const;
-	windowclass(bool instant_create = true);
+	windowclass();
 	~windowclass();
 };
 
 namespace LPC {
-	constexpr const wchar_t* defaultWindowTitle = L"Supported by Le_Petit_C";
-	extern windowclass Defaultclass;
-	struct wndCreateContainerExW {
-		DWORD dwExStyle = 0;
-		const windowclass* pwndclass = &Defaultclass;
-		wchar_t title[256];
-		DWORD dwStyle = WS_OVERLAPPEDWINDOW;
-		int X, Y, nWidth, nHeight;
-		HWND Parent = nullptr;
-		HMENU menu = nullptr;
-		HINSTANCE hInstance = statichInstance;
-		void* lpParam = nullptr;
+	/*struct wndCreateContainerExW {
 		wndCreateContainerExW();
 	};
-	HWND CreateWindowExW(const wndCreateContainerExW& createData);
-	class window;
+	HWND CreateWindowExW(const wndCreateContainerExW& createData);*/
 }
 
 class LPC::window {
 public:
 	using flag_t = uint8_t;
 private:
+	//窗口句柄
 	HWND hwnd = nullptr;
-	windowclass* wndc = &Defaultclass;
+	//窗口客户区矩形区域缓存
 	RECT clientRect{};
-	UINT_PTR timerid = 0;
+
+	//用户自定义内容
 	LONG_PTR User = 0;
+	//窗口回调函数
 	WNDPROC UserProc = DefWindowProc;
-	wndCreateContainerExW createContainer;
+	//wndCreateContainerExW createContainer;
 	flag_t flag = 0;
 	dexcoc testIfExist() const;
 	void refRect();
@@ -112,24 +176,22 @@ public:
 	constexpr operator HWND() const {
 		return hwnd;
 	}
-	dexcoc setClass(const windowclass& wc) noexcept;
 	//成功返回非零值:有窗口时返回SetWindowTextW的返回值，无窗口时返回1
 	template<typename char_t>
 	BOOL setTitle(const char_t* title) {
-		copystring_s(createContainer.title, sizeof(createContainer.title) / sizeof(wchar_t), title);
 		if (hwnd != nullptr)
-			return SetWindowTextW(hwnd, createContainer.title);
+			return SetWindowTextA(hwnd, title);
 		return 1;
 	}
 	void swap(window& wnd);
 	window(window&& wnd) noexcept;
-	dexcoc create();
+	dexcoc create(const WindowCreateSetting* setting = getWindowDefaultSetting());
 	dexcoc destroy();
 	~window();
-	void show();
-	void hide();
-	void msgBox(const char* text, const char* caption, UINT type = 0);
-	void msgBox(const wchar_t* text, const wchar_t* caption, UINT type = 0);
+	void show() const;
+	void hide() const;
+	void msgBox(const char* text, const char* caption, UINT type = 0) const;
+	void msgBox(const wchar_t* text, const wchar_t* caption, UINT type = 0) const;
 	constexpr bool windowCreated() const {
 		return hwnd != nullptr;
 	}
@@ -170,66 +232,6 @@ namespace LPC {
 	private:
 		HWND hwnd;
 		HDC hdc;
-	};
-}
-
-
-namespace LPC {
-	namespace priv {
-		static thread_local struct timerdata_t {
-			bool destruced = false;
-			typedef std::unordered_map<UINT_PTR, void*> data_t;
-			data_t data;
-			data_t* operator->() { return &data; }
-			data_t& operator*() { return data; }
-			~timerdata_t() { destruced = true; }
-		}timerdata;
-	}
-	template<typename ...procParams>
-	class timer {
-	public:
-		typedef void (*proc_t)(procParams...);
-		timer(UINT _uElapse, proc_t _proc, bool start = true, procParams... _params) : params(_params...) {
-			proc = _proc;
-			uElapse = _uElapse;
-			timerid = 0;
-			if (start) resume();
-		}
-		~timer() {
-			pause();
-		}
-		//继续定时器
-		void resume(){
-			if (running) return;
-			timerid = SetTimer(nullptr, 0, uElapse, wndtimerproc);
-			running = true;
-			(*priv::timerdata)[timerid] = this;
-		}
-		//暂停定时器
-		void pause(){
-			if (!running) return;
-			KillTimer(hwnd, timerid);
-			if (!priv::timerdata.destruced)
-				priv::timerdata->erase(timerid);
-			timerid = 0;
-			running = false;
-		}
-		//如果定时器是暂停着，让它继续，反之让它暂停
-		void change() {
-			if (running) pause();
-			else resume();
-		}
-	private:
-		static void CALLBACK wndtimerproc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime) {
-			timer<procParams...>* me = (decltype(me))(*priv::timerdata)[idEvent];
-			return std::apply(me->proc, me->params);
-		}
-		proc_t proc;
-		HWND hwnd = nullptr;
-		UINT_PTR timerid;
-		std::tuple<procParams...> params;
-		UINT uElapse;
-		bool running = false;
 	};
 }
 

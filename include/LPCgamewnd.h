@@ -36,7 +36,7 @@ namespace LPC {
 	event_t setevent(event_t event);
 
 	//≥ı ºªØLPCgamewnd
-	void gamewndstartup(event_t event, const wchar_t* title = defaultWindowTitle);
+	void gamewndstartup(event_t event, const char* title = defaultWindowTitle);
 	// Õ∑≈LPCgamewnd
 	void gamewndshutdown();
 }

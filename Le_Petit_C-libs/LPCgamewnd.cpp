@@ -16,7 +16,7 @@ static void SetWheelBywParam(WPARAM wParam) {
 int LPC::GetWheel() { return (int)extradata[0]; }
 int LPC::GetWheelPixel() { return (int)extradata[0] * WHEEL_DELTA; }
 
-inline int event_dispatch(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
+static int event_dispatch(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
 	switch (message) {
 	case WM_SIZE:
 		return gamewndevent(WD_SIZE, LOWORD(lParam), HIWORD(lParam));
@@ -53,7 +53,7 @@ inline int event_dispatch(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		message = MS_WHEEL;
 		SetWheelBywParam(wParam);
 	mousecallev2: {
-			POINT pt;
+			POINT pt{};
 			pt.x = GET_X_LPARAM(lParam);
 			pt.y = GET_Y_LPARAM(lParam);
 			ScreenToClient(hwnd, &pt);
@@ -62,7 +62,6 @@ inline int event_dispatch(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	default:
 		return 0;
 	}
-
 }
 
 static LRESULT CALLBACK gamewndproc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
@@ -86,15 +85,14 @@ static LRESULT CALLBACK gamewndproc(HWND hwnd, UINT message, WPARAM wParam, LPAR
 
 static int donothing_event(UINT, intptr_t, intptr_t) { return 0; }
 
-void LPC::gamewndstartup(event_t event, const wchar_t* title) {
+void LPC::gamewndstartup(event_t event, const char* title) {
+	PushDefaultClassSetting setting;
 	if (gamewindow != nullptr) return;
 	gamewndevent = donothing_event;
-	gameclass = new windowclass(false);
-	gameclass->ownDC(true);
-	gameclass->reg();
+	setting->ownDC(true);
+	gameclass = new windowclass();
 	gamewindow = new window;
 	gamewindow->setProc(gamewndproc);
-	gamewindow->setClass(*gameclass);
 	gamewindow->setTitle(title);
 	gamewindow->create();
 	gamewindow->show();

@@ -9,3 +9,4 @@
 #include <LPCthread.h>
 #include <LPCwnd.h>
 #include <LPCwndex.h>
+#include <LPCstr.h>
