@@ -220,6 +220,7 @@
     <ClInclude Include="..\include\LPCstr.h" />
     <ClInclude Include="..\include\LPCthread.h" />
     <ClInclude Include="..\include\LPCwnd.h" />
+    <ClInclude Include="..\include\LPCtimer.h" />
     <ClInclude Include="Objects.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
@@ -238,6 +239,7 @@
     <ClCompile Include="LPCmessages.cpp" />
     <ClCompile Include="LPCstr.cpp" />
     <ClCompile Include="LPCthread.cpp" />
+    <ClCompile Include="LPCtimer.cpp" />
     <ClCompile Include="LPCwnd.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

@@ -151,7 +151,7 @@ namespace LPC {
 class LPC::window {
 public:
 	using flag_t = uint8_t;
-private:
+protected:
 	//窗口句柄
 	HWND hwnd = nullptr;
 	//窗口客户区矩形区域缓存
@@ -166,6 +166,7 @@ private:
 	dexcoc testIfExist() const;
 	void refRect();
 	static LRESULT CALLBACK LPCwindowDefWindowProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
+	dexcoc create(const WindowCreateSetting* setting = getWindowDefaultSetting());
 public:
 	window();
 	window(const char* title);
@@ -185,7 +186,6 @@ public:
 	}
 	void swap(window& wnd);
 	window(window&& wnd) noexcept;
-	dexcoc create(const WindowCreateSetting* setting = getWindowDefaultSetting());
 	dexcoc destroy();
 	~window();
 	void show() const;

@@ -94,8 +94,6 @@ void LPC::gamewndstartup(event_t event, const char* title) {
 	gamewindow = new window;
 	gamewindow->setProc(gamewndproc);
 	gamewindow->setTitle(title);
-	gamewindow->create();
-	gamewindow->show();
 	gamedefault = new setDefault(*gamewindow);
 	gamewndevent = event;
 }

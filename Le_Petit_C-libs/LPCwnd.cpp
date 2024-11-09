@@ -14,18 +14,34 @@ namespace {
 }
 
 namespace LPC {
-	static WindowCreateSetting windowDefault;
-	static WindowCreateSetting* windowDefaultSetting = &windowDefault;
-	static WindowClassCreateSetting windowClassDefault;
-	static WindowClassCreateSetting* windowClassDefaultSetting = &windowClassDefault;
-	static windowclass Defaultclass;
+	static WindowCreateSetting& windowDefault() {
+		static WindowCreateSetting windowDefault;
+		return windowDefault;
+	}
+	static WindowCreateSetting*& windowDefaultSetting() {
+		static WindowCreateSetting* windowDefaultSetting = &windowDefault();
+		return windowDefaultSetting;
+	}
+	static WindowClassCreateSetting& windowClassDefault() {
+		static WindowClassCreateSetting windowClassDefault;
+		return windowClassDefault;
+	}
+	static WindowClassCreateSetting*& windowClassDefaultSetting() {
+		static WindowClassCreateSetting* windowClassDefaultSetting = &windowClassDefault();
+		return windowClassDefaultSetting;
+	}
+	static windowclass& Defaultclass() {
+		static windowclass Defaultclass;
+		return Defaultclass;
+	}
 }
 
+
 LPC::WindowCreateSetting* LPC::getWindowDefaultSetting() {
-	return windowDefaultSetting;
+	return windowDefaultSetting();
 }
 LPC::WindowClassCreateSetting* LPC::getWindowClassDefaultSetting() {
-	return windowClassDefaultSetting;
+	return windowClassDefaultSetting();
 }
 void LPC::msgBox(const char* text, const char* caption, UINT type) {
 	MessageBoxA(0, text, caption, type);
@@ -36,7 +52,7 @@ void LPC::msgBox(const wchar_t* text, const wchar_t* caption, UINT type) {
 
 LPC::WindowCreateSetting::WindowCreateSetting() :
 	dwExStyle(0),
-	pwndclass(&Defaultclass),
+	pwndclass(&Defaultclass()),
 	titleA(defaultWindowTitle),
 	titleW(defaultWindowTitleW),
 	dwStyle(WS_OVERLAPPEDWINDOW),
@@ -72,8 +88,8 @@ void LPC::WindowCreateSetting::setTitle(std::wstring title) {
 	titleW.swap(title);
 }
 
-LPC::PushDefaultWindowSetting::PushDefaultWindowSetting() : lastDefault(windowDefaultSetting), setting(*windowDefaultSetting) {
-	windowDefaultSetting = &setting;
+LPC::PushDefaultWindowSetting::PushDefaultWindowSetting() : lastDefault(windowDefaultSetting()), setting(*windowDefaultSetting()) {
+	windowDefaultSetting() = &setting;
 }
 
 void LPC::WindowClassCreateSetting::ownDC(bool b) {
@@ -104,8 +120,8 @@ void LPC::WindowClassCreateSetting::setMenuName(std::wstring menuName) {
 	menuNameW.swap(menuName);
 }
 
-LPC::PushDefaultClassSetting::PushDefaultClassSetting() : lastDefault(windowClassDefaultSetting), setting(*windowClassDefaultSetting){
-	windowClassDefaultSetting = &setting;
+LPC::PushDefaultClassSetting::PushDefaultClassSetting() : lastDefault(windowClassDefaultSetting()), setting(*windowClassDefaultSetting()){
+	windowClassDefaultSetting() = &setting;
 }
 
 LPC::WindowClassCreateSetting::WindowClassCreateSetting() {
@@ -123,15 +139,15 @@ LPC::WindowClassCreateSetting::WindowClassCreateSetting() {
 void LPC::windowclass::reg() {
 	//if (createdErrorDetect()) return true;
 	WNDCLASSW wc{};
-	wc.style = windowClassDefaultSetting->style;
-	wc.lpfnWndProc = windowClassDefaultSetting->lpfnWndProc;
-	wc.cbClsExtra = windowClassDefaultSetting->cbClsExtra;
-	wc.cbWndExtra = windowClassDefaultSetting->cbWndExtra;
+	wc.style = windowClassDefaultSetting()->style;
+	wc.lpfnWndProc = windowClassDefaultSetting()->lpfnWndProc;
+	wc.cbClsExtra = windowClassDefaultSetting()->cbClsExtra;
+	wc.cbWndExtra = windowClassDefaultSetting()->cbWndExtra;
 	wc.hInstance = hInstance;
-	wc.hIcon = windowClassDefaultSetting->hIcon;
-	wc.hCursor = windowClassDefaultSetting->hCursor;
-	wc.hbrBackground = windowClassDefaultSetting->hbrBackground;
-	wc.lpszMenuName = windowClassDefaultSetting->menuNameW.c_str();
+	wc.hIcon = windowClassDefaultSetting()->hIcon;
+	wc.hCursor = windowClassDefaultSetting()->hCursor;
+	wc.hbrBackground = windowClassDefaultSetting()->hbrBackground;
+	wc.lpszMenuName = windowClassDefaultSetting()->menuNameW.c_str();
 	wc.lpszClassName = classNameW.c_str();
 	classAtom = RegisterClassW(&wc);
 }
@@ -144,14 +160,14 @@ void LPC::windowclass::unreg() {
 LPC::windowclass::windowclass(std::wstring className) {
 	classNameA = wstringToString(className);
 	classNameW = className;
-	hInstance = windowClassDefault.hInstance;
+	hInstance = windowClassDefaultSetting()->hInstance;
 	reg();
 }
 
 LPC::windowclass::windowclass(std::string className) {
 	classNameA = className;
 	classNameW = stringToWString(className);
-	hInstance = windowClassDefault.hInstance;
+	hInstance = windowClassDefaultSetting()->hInstance;
 	reg();
 }
 
@@ -252,7 +268,9 @@ LPC::window::window(window&& wnd) noexcept {
 LPC::dexcoc LPC::window::create(const WindowCreateSetting* setting) {
 	hwnd = setting->create();
 	if (hwnd == nullptr) {
-		setexception("CreateWindowExW Failed!");
+		char buf[256];
+		sprintf_s(buf, sizeof(buf), "CreateWindowExW Failed! Error code: %x", GetLastError());
+		setexception(buf);
 		return 1;
 	}
 	SetWindowLongPtrW(hwnd, GWLP_WNDPROC, (LONG_PTR)LPCwindowDefWindowProc);

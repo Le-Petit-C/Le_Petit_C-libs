@@ -138,5 +138,5 @@ int LPC::sprintfsetexception(const char* format, ...) {
 void LPC::setexception(const char* str) noexcept {
 	lasterror = str;
 	if (priv::shouldExceptionOutput)
-		dprintf("%s", lasterror);
+		dprintf("%s\n", lasterror);
 }

@@ -10,3 +10,4 @@
 #include <LPCwnd.h>
 #include <LPCwndex.h>
 #include <LPCstr.h>
+#include <LPCtimer.h>

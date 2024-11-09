@@ -2,6 +2,7 @@
 #ifndef LPCgamewnd_h
 #define LPCgamewnd_h
 
+#include <functional>
 #include "LPCwnd.h"
 #include "LPCgraphics.h"
 #include "LPCwinmain.h"

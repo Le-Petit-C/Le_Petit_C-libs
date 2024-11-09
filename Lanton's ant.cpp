@@ -1,9 +1,10 @@
 
-#define LPCgamewndtitle L"Le_Petit_Cµƒ¿º∂Ÿ¬Ï“œ"
+#define LPCgamewndtitle "Le_Petit_Cµƒ¿º∂Ÿ¬Ï“œ"
 
 #include <LPCgraphics_autoinit.h>
 #include <LPCgamewnd.h>
 #include <LPCcomplex.h>
+#include <LPCtimer.h>
 
 #define BLKSLEN 32
 
@@ -126,7 +127,12 @@ block_t& map_t::operator[](complex<T> index) {
 }
 
 static void timerproc1();
-static timer<> _timer(1000 / 60, timerproc1, false);
+
+static timerex<>* newtimer() {
+	return new timerex<>(1000 / 60, timerproc1);
+}
+
+static timerex<>* _timer;
 
 static void paint() {
 	Clear(0x7f7f7f);
@@ -223,7 +229,11 @@ int event(unsigned int type, intptr_t p1, intptr_t p2) {
 	case KY_DOWN:
 		switch (p1) {
 		case VK_SPACE:
-			_timer.change();
+			if (_timer) {
+				delete _timer;
+				_timer = nullptr;
+			}
+			else _timer = newtimer();
 			lastt = clock();
 			break;
 		case VK_RETURN:
