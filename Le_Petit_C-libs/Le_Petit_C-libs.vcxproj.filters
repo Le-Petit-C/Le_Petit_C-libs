@@ -14,9 +14,6 @@
     <Filter Include="源文件\AItest">
       <UniqueIdentifier>{e179bb29-3282-44d9-af6c-ce5eae7b5790}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件\Snake">
-      <UniqueIdentifier>{9cbc2c6b-3604-4d3d-a48f-116e7fad45c9}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Objects.h">
@@ -65,9 +62,6 @@
   <ItemGroup>
     <ClCompile Include="AItest.cpp">
       <Filter>源文件\AItest</Filter>
-    </ClCompile>
-    <ClCompile Include="Snake.cpp">
-      <Filter>源文件\Snake</Filter>
     </ClCompile>
     <ClCompile Include="LPCdebug.cpp">
       <Filter>源文件</Filter>

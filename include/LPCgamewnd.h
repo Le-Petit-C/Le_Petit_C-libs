@@ -10,6 +10,8 @@
 
 #ifndef _LIB
 
+#include <LPCgraphics_autoinit.h>
+
 //需要用户自定义的函数:
 
 //接收比较常见的事件
