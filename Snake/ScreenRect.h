@@ -59,6 +59,8 @@ public:
 
 	inline Map::iterator end() { return map->end(); }
 
+	inline const RECT& getRect() const { return rect; }
+
 private:
 	RECT rect;
 	int stepx, stepy;

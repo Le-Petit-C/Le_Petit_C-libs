@@ -26,4 +26,5 @@ public:
 	inline iterator begin() { return iterator(buf); }
 	inline iterator end() { return iterator(buf + width * height); }
 	inline int& first() { return *buf; }
+	void clear();
 };
