@@ -137,7 +137,7 @@ struct LPC::complex {
 		return *this;
 	}
 	template<typename U>
-	constexpr auto operator/(complex<U> x) {
+	constexpr auto operator/(const complex<U>& x) {
 		complex<decltype(_Re / x._Re)> ret(*this);
 		ret /= x;
 		return ret;
@@ -173,11 +173,11 @@ struct LPC::complex {
 		return ret;
 	}
 	template<typename U>
-	constexpr bool operator==(complex<U> v) {
+	constexpr bool operator==(const complex<U>& v) const {
 		return v._Re == _Re && v._Im == _Im;
 	}
 	template<typename U>
-	constexpr bool operator!=(complex<U> v) {
+	constexpr bool operator!=(const complex<U>& v) const {
 		return v._Re != _Re || v._Im != _Im;
 	}
 	constexpr auto abs() const noexcept {
@@ -186,7 +186,11 @@ struct LPC::complex {
 	constexpr auto abssquare() const noexcept {
 		return _Re * _Re + _Im * _Im;
 	}
+	static const complex i;
 };
+
+template<typename T>
+const LPC::complex<T> LPC::complex<T>::i = LPC::complex<T>(0, 1);
 
 template<typename T, typename U, typename = std::enable_if_t<std::is_arithmetic_v<U>>> inline auto operator+(U v1, LPC::complex<T> v2) { return v2 + v1; }
 template<typename T, typename U, typename = std::enable_if_t<std::is_arithmetic_v<U>>> inline auto operator-(U v1, LPC::complex<T> v2) { return LPC::complex<U>(v1) - v2; }
@@ -206,6 +210,14 @@ std::istream& operator<<(std::istream& is, LPC::complex<T> x) {
 	is >> x._Re >> x._Im;
 	return is;
 }
+
+template<typename T>
+struct std::less<LPC::complex<T>> {
+	bool operator()(const LPC::complex<T>& v1, const LPC::complex<T>& v2) const {
+		if (v1.imag() == v2.imag()) return v1.real() < v2.real();
+		else return v1.imag() < v2.imag();
+	}
+};
 
 template<typename T, size_t width, size_t height>
 struct LPC::array2D {
