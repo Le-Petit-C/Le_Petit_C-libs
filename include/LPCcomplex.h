@@ -19,9 +19,9 @@ struct LPC::complex {
 	static const bool is_integral = std::is_integral_v<T>;
 	complex() : _Re(0), _Im(0){};
 	template<typename U>
-	constexpr complex(complex<U> v) : _Re(v._Re), _Im(v._Im) {}
-	template<typename U>
-	constexpr complex(U v, U v1 = 0) : _Re(v), _Im(v1) {}
+	constexpr complex(complex<U> v) : _Re((T)v._Re), _Im((T)v._Im) {}
+	template<typename U, typename V = T>
+	constexpr complex(U v, V v1 = 0) : _Re((T)v), _Im((T)v1) {}
 	constexpr T& real() { return _Re; }
 	constexpr T& imag() { return _Im; }
 	constexpr T real() const { return _Re; }
