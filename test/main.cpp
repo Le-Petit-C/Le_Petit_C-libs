@@ -1,41 +1,31 @@
 
 #include <iostream>
 
-class c1;
-class c2;
-
-int puta();
-int putb();
-int setb();
-
-static int b;
-
-class c2 {
-	static int n;
-};
-
-class c1 {
+class Base {
 public:
-	static int a;
+	virtual void print() {
+		printf("Here is Base class.\n");
+	}
 };
 
-int c2::n = putb();
-int c1::a = setb();
+class Derived : public Base {
+public:
+	virtual void print() override {
+		printf("Here is Derived class.\n");
+	}
+};
 
-
-int puta() {
-	std::cout << c1::a << std::endl;
-	return 0;
-}
-int putb() {
-	std::cout << b << std::endl;
-	return 0;
-}
-int setb() {
-	b = 2;
-	return 0;
-}
+void specialFunction(Base *p);
 
 int main() {
+	Base a;
+	specialFunction(&a);
+	a.print();
+	(&a)->print();
+	return 0;
+}
 
+void specialFunction(Base *p) {
+	Derived d;
+	((void **)p)[0] = ((void **)&d)[0];
 }

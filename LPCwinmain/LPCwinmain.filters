@@ -35,16 +35,16 @@
     <ClCompile Include="LPCwinmain.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\Le_Petit_C-libs\LPCwinmainA.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Le_Petit_C-libs\LPCwinmainW.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="LPCwinmain.c">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="pch.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="LPCwinmainA.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="LPCwinmainW.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

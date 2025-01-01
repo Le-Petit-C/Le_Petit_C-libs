@@ -11,27 +11,9 @@
     <Filter Include="源文件">
       <UniqueIdentifier>{98ea0826-37b3-48f7-903f-50e6d569f678}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件\AItest">
-      <UniqueIdentifier>{e179bb29-3282-44d9-af6c-ce5eae7b5790}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Objects.h">
-      <Filter>源文件\AItest</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\LPCgraphics.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="pch.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\LPCdebug.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\LPCmessages.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\LPCthread.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\include\LPCcommentlib.h">
@@ -40,54 +22,12 @@
     <ClInclude Include="..\include\LPCcomplex.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\LPCextra.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\LPCgamewnd.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\LPCwnd.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\LPCgraphics_autoinit.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\LPCstr.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\LPCtimer.h">
+    <ClInclude Include="..\testlib\Objects.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AItest.cpp">
-      <Filter>源文件\AItest</Filter>
-    </ClCompile>
-    <ClCompile Include="LPCdebug.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="LPCgamewnd.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="LPCgraphics.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="LPCmessages.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="LPCthread.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="LPCwnd.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="pch.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="LPCstr.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="LPCtimer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,9 +1,8 @@
 
-#include <windows.h>
+#include "pch.h"
 #include <conio.h>
-#include "LPCdebug.h"
 
-extern int __cdecl main(int argc, wchar_t** argv);
+extern "C" int __cdecl main(int argc, wchar_t **argv);
 
 int LPCinitapiW(){
     int argc;
@@ -12,7 +11,7 @@ int LPCinitapiW(){
     int ret = main(argc, argv);
     LocalFree(argv);
     if (LPC::debugOutputAllocated) {
-        printf("\n主线程执行完毕，按任意键退出主线程...\n");
+        wprintf(L"\n主线程执行完毕，返回值为%d(%x)，按任意键退出主线程...\n", ret, ret);
         char c = _getch();
     }
     return ret;

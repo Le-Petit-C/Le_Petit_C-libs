@@ -1,23 +1,36 @@
 
 #pragma once
 
-#ifdef __cplusplus
 #include "LPCdebug.h"
-#endif
+
+int LPCinitapiA();
+int LPCinitapiW();
 
 #ifndef _LIB
-	#include <windows.h>
 	#ifndef _WIN64
 		#ifdef _DEBUG
-			#pragma comment(lib, "..\\Debug\\Le_Petit_C-winmain.lib")
+			#pragma comment(lib, "..\\Debug\\LPCwinmain.lib")
 		#else
-			#pragma comment(lib, "..\\Release\\Le_Petit_C-winmain.lib")
+			#pragma comment(lib, "..\\Release\\LPCwinmain.lib")
 		#endif
 	#else
 		#ifdef _DEBUG
-			#pragma comment(lib, "..\\x64\\Debug\\Le_Petit_C-winmain.lib")
+			#pragma comment(lib, "..\\x64\\Debug\\LPCwinmain.lib")
 		#else
-			#pragma comment(lib, "..\\x64\\Release\\Le_Petit_C-winmain.lib")
+			#pragma comment(lib, "..\\x64\\Release\\LPCwinmain.lib")
 		#endif
 	#endif
+	int WINAPI WinMain(
+		_In_ HINSTANCE hInstance,
+		_In_opt_ HINSTANCE hPrevInstance,
+		_In_ LPSTR lpCmdLine,
+		_In_ int nShowCmd
+	) {
+#ifndef LPCWINMAINW
+		return LPCinitapiA();
+#else
+		return LPCinitapiW();
 #endif
+	}
+#endif
+

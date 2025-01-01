@@ -1,10 +1,8 @@
 
-#include <windows.h>
-#include <malloc.h>
+#include "pch.h"
 #include <conio.h>
-#include "LPCdebug.h"
 
-extern int __cdecl main(int argc, char** argv);
+extern "C" int __cdecl main(int argc, char **argv);
 
 int LPCinitapiA(){
     int argc;
@@ -26,7 +24,7 @@ int LPCinitapiA(){
         free(argv[a]);
     free(argv);
     if (LPC::debugOutputAllocated) {
-        printf("\n主线程执行完毕，按任意键退出主线程...\n");
+        printf("\n主线程执行完毕，返回值为%d(%x)，按任意键退出主线程...\n", ret, ret);
         char c = _getch();
     }
     return ret;

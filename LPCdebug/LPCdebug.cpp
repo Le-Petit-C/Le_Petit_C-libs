@@ -135,8 +135,15 @@ int LPC::sprintfsetexception(const char* format, ...) {
 		dprintf("%s", lasterror);
 	return ret;
 }
+
 void LPC::setexception(const char* str) noexcept {
 	lasterror = str;
 	if (priv::shouldExceptionOutput)
 		dprintf("%s\n", lasterror);
+}
+
+void LPC::setexception(const char *exc, const char *file, int line, const char *function) noexcept {
+	lasterror = exc;
+	if (priv::shouldExceptionOutput)
+		dprintf("\n[File:%s|Line:%d|In function:%s]\nException:%s\n", file, line, function, exc);
 }

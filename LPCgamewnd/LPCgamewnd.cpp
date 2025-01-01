@@ -1,9 +1,15 @@
 
 #include "pch.h"
+#include <windowsx.h>
+
+namespace LPC {
+	namespace priv {
+		const MSG *pmsg;
+	}
+}
 
 LPC::windowclass* gameclass;
-LPC::window* gamewindow;
-LPC::setDefault* gamedefault;
+LPC::defaultWindow* gamewindow;
 
 static LPC::event_t gamewndevent;
 static UINT currentmessage;
@@ -52,7 +58,7 @@ static int event_dispatch(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_MOUSEWHEEL:
 		message = MS_WHEEL;
 		SetWheelBywParam(wParam);
-	mousecallev2: {
+	/*mousecallev2:*/ {
 			POINT pt{};
 			pt.x = GET_X_LPARAM(lParam);
 			pt.y = GET_Y_LPARAM(lParam);
@@ -67,13 +73,6 @@ static int event_dispatch(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 static LRESULT CALLBACK gamewndproc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
 	currentmessage = message;
 	if (gamewndevent(WND_MESSAGE, wParam, lParam) != 0) return 0;
-	switch (message) {
-	case WM_SIZE:
-		//重设缓冲区大小
-		if (LPC::getDefaultBuffer() != nullptr && LOWORD(lParam) != 0 && HIWORD(lParam) != 0)
-			LPC::resize(LOWORD(lParam), HIWORD(lParam));
-		break;
-	}
 	if (event_dispatch(hwnd, message, wParam, lParam) != 0) return 0;
 	switch (message) {
 	case WM_DESTROY:
@@ -90,16 +89,14 @@ void LPC::gamewndstartup(event_t event, const char* title) {
 	if (gamewindow != nullptr) return;
 	gamewndevent = donothing_event;
 	setting->ownDC(true);
-	gameclass = new windowclass();
-	gamewindow = new window;
-	gamewindow->setProc(gamewndproc);
-	gamewindow->setTitle(title);
-	gamedefault = new setDefault(*gamewindow);
+	gameclass = new windowclass;
+	gamewindow = new defaultWindow;
+	gamewindow->setDefaultProc(gamewndproc);
+	if(title) gamewindow->setTitle(title);
 	gamewndevent = event;
 }
 
 void LPC::gamewndshutdown() {
-	delete gamedefault;
 	delete gamewindow;
 	delete gameclass;
 }

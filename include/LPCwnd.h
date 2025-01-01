@@ -2,30 +2,42 @@
 #ifndef LPCwnd_h
 #define LPCwnd_h
 
-#include <unordered_map>
-
-#include <iostream>
 #include <windows.h>
-#include <stdint.h>
 #include <string>
-#include <malloc.h>
-#include <tuple>
-#include <thread>
-#include <functional>
-#include <type_traits>
-#include <deque>
 #include <atomic>
-#include <vector>
-#include "LPCmessages.h"
 #include "LPCdebug.h"
 #include "LPCextra.h"
 
+#ifndef _LIB
+
 #pragma comment(lib, "gdiplus.lib")
-#include "LPCcommentlib.h"
+
+#ifndef _WIN64
+#ifdef _DEBUG
+#pragma comment(lib, "..\\Debug\\LPCwnd.lib")
+#else
+#pragma comment(lib, "..\\Release\\LPCwnd.lib")
+#endif
+#else
+#ifdef _DEBUG
+#pragma comment(lib, "..\\x64\\Debug\\LPCwnd.lib")
+#else
+#pragma comment(lib, "..\\x64\\Release\\LPCwnd.lib")
+#endif
+#endif
+
+#endif
+
 
 namespace LPC {
 	void msgBox(const char* text, const char* caption, UINT type = 0);
 	void msgBox(const wchar_t* text, const wchar_t* caption, UINT type = 0);
+
+	typedef void (*MOUSEPROC)(int type, int x, int y, int wheel);//鼠标消息的窗口回调函数
+	typedef void (*KEYPROC)(bool type, int key);//键盘消息的窗口回调函数
+	typedef void (*PAINTPROC)(HDC hdc);//绘图消息的窗口回调函数
+
+	inline bool isKeyPressed(int key);//判断按键是否按下，key是虚拟键码。处理键盘消息的时候或许能用到。
 	
 	//窗口对象。
 	//创建时优先使用构造函数的参数，不足部分再取用默认设置中的参数。
@@ -59,6 +71,33 @@ namespace LPC {
 	WindowClassCreateSetting* getWindowClassDefaultSetting();
 }
 
+namespace LPC {
+	//设置默认的创建参数
+	//设置创建的窗口大小位置
+	//基于窗口设置
+	inline void setCreateWindowRect(const RECT &rect);
+	inline void setCreateWindowRect(const RECT *rect);
+	//基于窗口客户区设置
+	inline void setCreateClientRect(const RECT &rect);
+	inline void setCreateClientRect(const RECT *rect);
+}
+
+namespace LPC {
+	enum specificWindowStyles {
+		MaximizeWindow,//最大化窗口
+		FullScreenWindow//全屏窗口
+	};
+#ifndef LPCNOMACRO
+	#define DSKW (getDesktopWidth())
+	#define DSKH (getDesktopHeight())
+#else//如果不用宏定义，这么操作可以达到类似的效果。但是遇到不定参数函数如printf无法正确返回值。
+	struct { inline operator int() const { return getDesktopWidth(); } } DSKW;
+	struct { inline operator int() const { return getDesktopHeight(); } } DSKH;
+#endif
+	inline int getDesktopWidth();
+	inline int getDesktopHeight();
+}
+
 struct LPC::WindowCreateSetting {
 	DWORD dwExStyle;
 	const windowclass* pwndclass;
@@ -75,6 +114,10 @@ struct LPC::WindowCreateSetting {
 	HWND create() const;
 	void setTitle(std::string);
 	void setTitle(std::wstring);
+	void setWindowRect(const RECT &rect);
+	inline void setWindowRect(const RECT *rect);
+	void setClientRect(RECT rect);
+	inline void setClientRect(const RECT *rect);
 };
 
 class LPC::PushDefaultWindowSetting {
@@ -126,7 +169,6 @@ class LPC::windowclass {
 	std::string classNameA;
 	std::wstring classNameW;
 	ATOM classAtom;
-	//dexcoc createdErrorDetect() const;
 	void reg();
 	void unreg();
 public:
@@ -141,16 +183,14 @@ public:
 	~windowclass();
 };
 
-namespace LPC {
-	/*struct wndCreateContainerExW {
-		wndCreateContainerExW();
-	};
-	HWND CreateWindowExW(const wndCreateContainerExW& createData);*/
-}
-
 class LPC::window {
 public:
 	using flag_t = uint8_t;
+	/*窗口大小改变消息的窗口回调函数，参数是客户区大小。
+	type是大小改变的类型，详细内容导航:
+	SIZE_RESTORED
+	(Ctrl + 鼠标左键单击索引词可导航至内容)。*/
+	typedef void (*SIZEPROC)(int w, int h, int type);
 protected:
 	//窗口句柄
 	HWND hwnd = nullptr;
@@ -159,18 +199,27 @@ protected:
 
 	//用户自定义内容
 	LONG_PTR User = 0;
-	//窗口回调函数
-	WNDPROC UserProc = DefWindowProc;
-	//wndCreateContainerExW createContainer;
-	flag_t flag = 0;
+	MOUSEPROC mouseProc = nullptr;
+	KEYPROC keyProc = nullptr;
+	PAINTPROC paintProc = nullptr;
+	SIZEPROC sizeProc = nullptr;
+	WNDPROC defaultProc = DefWindowProc;//剩余消息的窗口回调函数，如果之前的回调函数未设置，或者消息没有匹配的回调函数，会调用这个回调函数
 	dexcoc testIfExist() const;
 	void refRect();
 	static LRESULT CALLBACK LPCwindowDefWindowProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
-	dexcoc create(const WindowCreateSetting* setting = getWindowDefaultSetting());
 public:
 	window();
-	window(const char* title);
+	window(const char *title);
+	window(const char *title, int clientwidth, int clientHeight);
+	window(const char *title, int x, int y, int clientwidth, int clientHeight);
+	window(const char *title, RECT clientRect);
+	window(const wchar_t *title);
+	window(const wchar_t *title, int clientwidth, int clientHeight);
+	window(const wchar_t *title, int x, int y, int clientwidth, int clientHeight);
+	window(const wchar_t *title, RECT clientRect);
+	window(specificWindowStyles style);
 	window(const window&) = delete;
+	dexcoc create(const WindowCreateSetting* setting = getWindowDefaultSetting());
 	constexpr HWND gethwnd() const {
 		return hwnd;
 	}
@@ -184,55 +233,139 @@ public:
 			return SetWindowTextA(hwnd, title);
 		return 1;
 	}
+	static void resizeWindow(HWND hwnd, int width, int height);//设置窗口大小
+	static void resizeClient(HWND hwnd, int width, int height);//设置窗口客户区大小
+	inline void resizeWindow(int width, int height) const;//设置窗口大小
+	inline void resizeClient(int width, int height) const;//设置窗口客户区大小
 	void swap(window& wnd);
 	window(window&& wnd) noexcept;
 	dexcoc destroy();
 	~window();
 	void show() const;
 	void hide() const;
+	void fullScreen() const;//全屏
+	void maxShow() const;//最大化，如果窗口样式合适的话会直接全屏
+	void restore() const;//恢复默认窗口大小和样式
+	bool isFullScreen() const;//是否全屏
 	void msgBox(const char* text, const char* caption, UINT type = 0) const;
 	void msgBox(const wchar_t* text, const wchar_t* caption, UINT type = 0) const;
-	constexpr bool windowCreated() const {
+	inline constexpr bool windowCreated() const {
 		return hwnd != nullptr;
 	}
 	//Windows中默认的User被占用了，请用这个设置额外的User Data
 	//返回值为原来的User Data
-	constexpr LONG_PTR setUser(LONG_PTR newuser) {
-		LONG_PTR lastUser = User;
-		User = newuser;
-		return lastUser;
-	}
+	inline LONG_PTR setUser(LONG_PTR newuser);
 	//Windows中默认的User被占用了，请用这个获取额外的User Data
-	constexpr LONG_PTR getUser(LONG_PTR newuser) const {
-		return User;
-	}
-	//设置用户的自定义消息回调函数。没有设置时是DefWindowProc。
-	constexpr WNDPROC setProc(WNDPROC proc) {
-		WNDPROC lastproc = UserProc;
-		UserProc = proc;
-		return lastproc;
-	}
+	inline LONG_PTR getUser() const;
+	//设置鼠标消息的回调函数，返回值为原来的回调函数
+	inline MOUSEPROC setMouseProc(MOUSEPROC proc);
+	//设置键盘消息的回调函数，返回值为原来的回调函数
+	inline KEYPROC setKeyProc(KEYPROC proc);
+	//设置绘图消息的回调函数，返回值为原来的回调函数
+	inline PAINTPROC setPaintProc(PAINTPROC proc);
+	//设置窗口大小改变消息的回调函数，返回值为原来的回调函数
+	inline SIZEPROC setSizeProc(SIZEPROC proc);
+	//Windows中默认的窗口消息回调函数被占用了，请用这个设置额外的窗口消息回调函数
+	//设置默认的窗口消息回调函数，返回值为原来的回调函数
+	inline WNDPROC setDefaultProc(WNDPROC proc);
 	//等待窗口被销毁。如果调用线程是窗口所属线程，会进入只获取该窗口的消息的消息循环。如果不是该窗口所属线程，会直接退出。
 	dexcoc waitForDestroy();
-	constexpr int getClientWidth() const {
-		return clientRect.right - clientRect.left;
-	}
-	constexpr int getClientHeight() const {
-		return clientRect.bottom - clientRect.top;
-	}
+	//获取窗口客户区矩形区域
+	inline const RECT &getClientRect() const;
+	//获取窗口客户区宽度
+	inline int getClientWidth() const;
+	//获取窗口客户区高度
+	inline int getClientHeight() const;
 };
 
 namespace LPC {
 	struct wndDC {
 		inline wndDC(HWND hWnd) { hwnd = hWnd; hdc = GetDC(hwnd); }
-		inline wndDC(const window& wnd) { hwnd = wnd.gethwnd(); hdc = GetDC(hwnd); };
-		inline wndDC(const window* wnd) { hwnd = wnd->gethwnd(); hdc = GetDC(hwnd); };
+		inline wndDC(const window &wnd) { hwnd = wnd.gethwnd(); hdc = GetDC(hwnd); };
+		inline wndDC(const window *wnd) { hwnd = wnd->gethwnd(); hdc = GetDC(hwnd); };
 		inline ~wndDC() { ReleaseDC(hwnd, hdc); }
 		inline operator HDC() { return hdc; }
 	private:
 		HWND hwnd;
 		HDC hdc;
 	};
+}
+namespace LPC{
+	inline bool isKeyPressed(int key) {
+		return GetAsyncKeyState(key) & 0x8000;
+	}
+	inline void setCreateWindowRect(const RECT &rect) {
+		getWindowDefaultSetting()->setWindowRect(rect);
+	}
+	inline void setCreateWindowRect(const RECT *rect) {
+		getWindowDefaultSetting()->setWindowRect(rect);
+	}
+	inline void setCreateClientRect(const RECT &rect){
+		getWindowDefaultSetting()->setClientRect(rect);
+	}
+	inline void setCreateClientRect(const RECT *rect) {
+		getWindowDefaultSetting()->setClientRect(rect);
+	}
+	inline int getDesktopWidth() {
+		return GetSystemMetrics(SM_CXSCREEN);
+	}
+	inline int getDesktopHeight() {
+		return GetSystemMetrics(SM_CYSCREEN);
+	}
+	inline void WindowCreateSetting::setWindowRect(const RECT *rect) {
+		setWindowRect(*rect);
+	}
+	inline void WindowCreateSetting::setClientRect(const RECT *rect) {
+		setClientRect(*rect);
+	}
+	inline void window::resizeWindow(int width, int height) const {
+		resizeWindow(hwnd, width, height);
+	}
+	inline void window::resizeClient(int width, int height) const {
+		resizeClient(hwnd, width, height);
+	}
+	inline LONG_PTR window::setUser(LONG_PTR newuser) {
+		LONG_PTR lastUser = User;
+		User = newuser;
+		return lastUser;
+	}
+	inline LONG_PTR window::getUser() const {
+		return User;
+	}
+	inline MOUSEPROC window::setMouseProc(MOUSEPROC proc) {
+		MOUSEPROC lastproc = mouseProc;
+		mouseProc = proc;
+		return lastproc;
+	}
+	inline KEYPROC window::setKeyProc(KEYPROC proc) {
+		KEYPROC lastproc = keyProc;
+		keyProc = proc;
+		return lastproc;
+	}
+	inline PAINTPROC window::setPaintProc(PAINTPROC proc) {
+		PAINTPROC lastproc = paintProc;
+		paintProc = proc;
+		return lastproc;
+	}
+	inline window::SIZEPROC window::setSizeProc(SIZEPROC proc) {
+		SIZEPROC lastproc = sizeProc;
+		sizeProc = proc;
+		return lastproc;
+	}
+	inline WNDPROC window::setDefaultProc(WNDPROC proc) {
+		WNDPROC lastproc = defaultProc;
+		defaultProc = proc;
+		return lastproc;
+	}
+	inline const RECT &window::getClientRect() const {
+		return clientRect;
+	}
+	inline int window::getClientWidth() const {
+		return clientRect.right - clientRect.left;
+	}
+	inline int window::getClientHeight() const {
+		return clientRect.bottom - clientRect.top;
+	}
 }
 
 #endif

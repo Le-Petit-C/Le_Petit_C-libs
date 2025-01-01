@@ -14,7 +14,22 @@
 #include <locale.h>
 #include <functional>
 
-#pragma comment(lib, "..\\x64\\Debug\\Le_Petit_C-libs.lib")
+#ifndef _LIB
+#include <windows.h>
+#ifndef _WIN64
+#ifdef _DEBUG
+#pragma comment(lib, "..\\Debug\\LPCdebug.lib")
+#else
+#pragma comment(lib, "..\\Release\\LPCdebug.lib")
+#endif
+#else
+#ifdef _DEBUG
+#pragma comment(lib, "..\\x64\\Debug\\LPCdebug.lib")
+#else
+#pragma comment(lib, "..\\x64\\Release\\LPCdebug.lib")
+#endif
+#endif
+#endif
 
 namespace LPC {
 	//函数返回值类型，do exception occurd的缩写，为true时表示出现了异常，LPC::lasterror是最后一个错误的描述字符串，可printf("%s",LPC::lasterror)查看
@@ -35,11 +50,14 @@ namespace LPC {
 	int dscanf_s(const char* format, ...);
 	int sprintfsetexception(const char* format, ...);
 	void setexception(const char* str) noexcept;
+	void setexception(const char *exc, const char* file, int line, const char* function) noexcept;
 	namespace priv {
 		extern bool shouldExceptionOutput;
 	}
 	void LPCexceptionOutput(bool b);
 }
+
+#define SetException(exc) ::LPC::setexception(exc, __FILE__, __LINE__, __FUNCTION__)
 
 #ifdef _DEBUG
 namespace LPC {

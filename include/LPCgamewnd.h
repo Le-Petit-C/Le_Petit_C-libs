@@ -3,14 +3,30 @@
 #define LPCgamewnd_h
 
 #include <functional>
-#include "LPCwnd.h"
-#include "LPCgraphics.h"
+#include "LPCwndex.h"
+#include "LPCgdiplusgraphics.h"
 #include "LPCwinmain.h"
-#include "LPCdebug.h"
 
 #ifndef _LIB
 
 #include <LPCgraphics_autoinit.h>
+
+#pragma comment(lib, "gdiplus.lib")
+
+#ifndef _WIN64
+#ifdef _DEBUG
+#pragma comment(lib, "..\\Debug\\LPCgamewnd.lib")
+#else
+#pragma comment(lib, "..\\Release\\LPCgamewnd.lib")
+#endif
+#else
+#ifdef _DEBUG
+#pragma comment(lib, "..\\x64\\Debug\\LPCgamewnd.lib")
+#else
+#pragma comment(lib, "..\\x64\\Release\\LPCgamewnd.lib")
+#endif
+
+#endif
 
 //需要用户自定义的函数:
 
@@ -29,8 +45,6 @@ namespace LPC {
 	inline const MSG* GetMSG();
 }
 
-#include "LPCwndex.h"
-
 namespace LPC {
 	//定义event回调函数的样子
 	typedef int (*event_t)(unsigned int, intptr_t, intptr_t);
@@ -39,7 +53,7 @@ namespace LPC {
 	event_t setevent(event_t event);
 
 	//初始化LPCgamewnd
-	void gamewndstartup(event_t event, const char* title = defaultWindowTitle);
+	void gamewndstartup(event_t event, const char* title = nullptr);
 	//释放LPCgamewnd
 	void gamewndshutdown();
 }
@@ -91,12 +105,7 @@ namespace LPC {
 
 namespace LPC {
 	namespace priv {
-
-#ifdef _LIB
-		const MSG* pmsg;
-#else
 		extern const MSG* pmsg;
-#endif
 	}
 }
 

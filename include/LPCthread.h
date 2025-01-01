@@ -113,7 +113,7 @@ private:
 	HANDLE hthread;
 	std::deque<uint64_t> msgqueue;
 	std::mutex mtx;
-	static DWORD todothread_proc(void*);
+	static DWORD WINAPI todothread_proc(void*);
 	static void SendTodoProc(todothread*&);
 	void baseact(baseactfunc_t);
 	void try_resume();

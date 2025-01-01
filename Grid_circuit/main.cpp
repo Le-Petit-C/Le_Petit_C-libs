@@ -1,8 +1,10 @@
 
 #include <map>
+#include <deque>
 #include <LPCgamewnd.h>
 #include <LPCtimer.h>
 #include <LPCcomplex.h>
+#include <LPCextra.h>
 
 using namespace LPC;
 
@@ -18,7 +20,7 @@ double camx = 0, camy = 0;//摄像机在地图中的x,y坐标，对应屏幕坐标原点
 pointptr_t cur;
 
 //旋转缩放平移后绘制多边形
-static void shiftPolygon(cdouble x, cdouble y, cdouble shift, const cdouble (&points)[], int count, COLORREF color) {
+static void shiftPolygon(cdouble x, cdouble y, cdouble shift, const cdouble (&points)[], unsigned int count, COLORREF color) {
 	POINT *p = (POINT*)_malloca(sizeof(POINT) * count);
 	if (!p) throw std::bad_alloc();
 	for (size_t a = 0; a < count; ++a) {
@@ -26,7 +28,7 @@ static void shiftPolygon(cdouble x, cdouble y, cdouble shift, const cdouble (&po
 		p[a].x = (int)floor(res.real());
 		p[a].y = (int)floor(res.imag());
 	}
-	Polygon(p, count, color);
+	FillPolygon(p, count, color | 0xff000000);
 	_freea(p);
 }
 
@@ -387,7 +389,7 @@ public:
 			y -= (minlim - h) >> 1;
 			h = minlim;
 		}
-		Rectangle(x, y, w, h, powered ? 0xafffff : 0x1f2f3f);
+		FillRectangle(x, y, w, h, powered ? 0xffafffff : 0xff1f2f3f);
 	}
 	virtual void stackUpdate() override {
 		schedule();
@@ -771,11 +773,12 @@ public:
 		int mx = (int)midx, my = (int)midy;
 		int lw = (rect.right - rect.left) / 16;
 		int lh = (rect.bottom - rect.top) / 16;
-		Rectangle(x1 - lw, y1 - lh, w1 + lw * 2, h1 + lh * 2, color);
-		if (connects[0]) Rectangle(mx, y1, rect.right - mx, h1, color);
-		if (connects[1]) Rectangle(x1, my, w1, rect.bottom - my, color);
-		if (connects[2]) Rectangle(rect.left, y1, mx - rect.left, h1, color);
-		if (connects[3]) Rectangle(x1, rect.top, w1, my - rect.top, color);
+		color |= 0xff000000;
+		FillRectangle(x1 - lw, y1 - lh, w1 + lw * 2, h1 + lh * 2, color);
+		if (connects[0]) FillRectangle(mx, y1, rect.right - mx, h1, color);
+		if (connects[1]) FillRectangle(x1, my, w1, rect.bottom - my, color);
+		if (connects[2]) FillRectangle(rect.left, y1, mx - rect.left, h1, color);
+		if (connects[3]) FillRectangle(x1, rect.top, w1, my - rect.top, color);
 	}
 private:
 	//获取相邻激活红石粉或激活原件对自己的最小激活距离，若没有激活返回0
@@ -893,12 +896,12 @@ static void paintItems() {
 		rect.bottom = SCRH - edge1;
 		rect.left = (LONG)(SCRW / 2 + height2 * (a * 2 - itemCount) / 2);
 		rect.right = (LONG)(SCRW / 2 + height2 * (a * 2 - itemCount + 2) / 2);
-		Rectangle(rect.left - edge1 / 2, rect.top - edge1 / 2, rect.right - rect.left + edge1, rect.bottom - rect.top + edge1, 0x7f7f7f);
+		FillRectangle(rect.left - edge1 / 2, rect.top - edge1 / 2, rect.right - rect.left + edge1, rect.bottom - rect.top + edge1, 0xff7f7f7f);
 		rect.left += edge1 / 2;
 		rect.top += edge1 / 2;
 		rect.right -= edge1 / 2;
 		rect.bottom -= edge1 / 2;
-		Rectangle(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, a == selected ? 0xefefef : 0xafafaf);
+		FillRectangle(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, a == selected ? 0xffefefef : 0xffafafaf);
 		rect.left += edge1 / 2;
 		rect.top += edge1 / 2;
 		rect.right -= edge1 / 2;
@@ -918,10 +921,10 @@ static void paint() {
 	rect.top = (int)std::floor((cur.imag() - camy) * stretch);
 	rect.right = (int)std::floor((cur.real() + 1 - camx) * stretch);
 	rect.bottom = (int)std::floor((cur.imag() + 1 - camy) * stretch);
-	Rectangle(rect.left - w, rect.top - w, w, rect.bottom - rect.top + w * 2, 0x000000);
-	Rectangle(rect.right, rect.top - w, w, rect.bottom - rect.top + w * 2, 0x000000);
-	Rectangle(rect.left - w, rect.top - w, rect.right - rect.left + w * 2, w, 0x000000);
-	Rectangle(rect.left - w, rect.bottom, rect.right - rect.left + w * 2, w, 0x000000);
+	FillRectangle(rect.left - w, rect.top - w, w, rect.bottom - rect.top + w * 2, 0xff000000);
+	FillRectangle(rect.right, rect.top - w, w, rect.bottom - rect.top + w * 2, 0xff000000);
+	FillRectangle(rect.left - w, rect.top - w, rect.right - rect.left + w * 2, w, 0xff000000);
+	FillRectangle(rect.left - w, rect.bottom, rect.right - rect.left + w * 2, w, 0xff000000);
 	ref();
 }
 

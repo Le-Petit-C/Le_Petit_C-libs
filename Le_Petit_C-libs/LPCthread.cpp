@@ -29,7 +29,7 @@ LPC::dexcoc LPC::todothread::Send(todo_func_t func, uint64_t* data) {
 	return false;
 }
 
-DWORD LPC::todothread::todothread_proc(void* data) {
+DWORD WINAPI LPC::todothread::todothread_proc(void* data) {
 	LPC::todothread*& me = (LPC::todothread*&)data;
 	while (!me->shouldquit) {
 		me->mtx.lock();
